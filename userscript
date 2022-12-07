@@ -1,0 +1,129 @@
+
+// ==UserScript==
+// @name         Low time warning
+// @namespace    https://lichess.org
+// @version      0.1
+// @description  Add a button to change the time
+// @author       Antimony051
+// @match        https://lichess.org/*
+// @grant        none
+// ==/UserScript==
+
+var flag=true
+var user_min=-1
+var user_sec=-1
+var current_min=0
+var current_sec=0
+var sound_played=false
+function saveTime() {
+   user_min = document.getElementById('minutes').value;
+   user_sec = document.getElementById('seconds').value;
+ document.getElementById('time-form').style.display = 'none';
+      document.getElementById('change-time-btn').style.display = 'block';
+    if (user_min<0){user_min=0}
+    if (user_min>60){user_min=60}
+    if (user_sec<=0){user_sec=1}
+    if (user_sec>59){user_sec=59}
+    event.preventDefault();
+}
+
+  function addButton() {
+    var btn = document.createElement('button');
+    btn.id = 'change-time-btn';
+    btn.onclick = showForm;
+    btn.innerHTML = 'LTW';
+    btn.style.fontSize = '16px';
+    btn.style.padding = '5px';
+    btn.style.border = 'none';
+    btn.style.borderRadius = '3px';
+    btn.style.backgroundColor = '#2a5780';
+    btn.style.color = 'white';
+    btn.style.cursor = 'pointer';
+     document.getElementsByClassName("site-buttons")[0].appendChild(btn);
+  }
+function addForm() {
+  var form = document.createElement('form');
+  form.id = 'time-form';
+  form.style.display = 'none';
+  form.style.textAlign = 'left';
+  form.style.margin = 'auto';
+  form.style.width = '50%';
+  form.style.padding = '10px';
+  form.style.border = '2px solid #2a5780';
+  form.style.borderRadius = '5px';
+  var label1 = document.createElement('label');
+  label1.htmlFor = 'minutes';
+  label1.innerHTML = 'Minutes:';
+  label1.style.fontSize = '13px';
+  var input1 = document.createElement('input');
+  input1.type = 'number';
+  input1.id = 'minutes';
+  input1.name = 'minutes';
+  input1.style.width = '100%';
+  input1.style.padding = '5px 10px';
+  input1.style.margin = '4px 0';
+  input1.style.boxSizing = 'border-box';
+  var label2 = document.createElement('label');
+  label2.htmlFor = 'seconds';
+  label2.innerHTML = 'Seconds:';
+  label2.style.fontSize = '13px';
+  var input2 = document.createElement('input');
+  input2.type = 'number';
+  input2.id = 'seconds';
+  input2.name = 'seconds';
+  input2.style.width = '100%';
+  input2.style.padding = '5px 10px';
+  input2.style.margin = '4px 0';
+  input2.style.boxSizing = 'border-box';
+  var submitBtn = document.createElement('button');
+  submitBtn.style.padding = '5px 10px';
+  submitBtn.onclick = saveTime;
+  submitBtn.innerHTML="Set";
+
+  document.getElementsByClassName("site-buttons")[0].appendChild(form)
+  var box=document.getElementsByClassName("site-buttons")[0].children[5]
+  box.appendChild(label1)
+  box.appendChild(input1)
+  box.appendChild(label2)
+  box.appendChild(input2)
+  box.appendChild(submitBtn)
+  flag=false
+}
+addButton()
+addForm()
+
+function showForm() {
+    document.getElementById('change-time-btn').style.display = 'none';
+    if (flag){
+        addForm()
+    }
+    document.getElementById('time-form').style.display = 'block';
+  }
+setInterval(checkTimer, 500);
+function checkTimer(){
+    get_current_time()
+    console.log(current_min,current_sec)
+    if ((current_min==user_min) && (current_sec==user_sec)){
+        if (!sound_played){
+        window.lichess.sound.play('lowTime')
+            sound_played=true
+    }
+    }
+ //   time_control=document.getElementsByClassName("setup")[0].childNodes[1].data
+ //   extractNumbers(time_control)
+
+}
+function extractNumbers(time_control) {
+    var parts = time_control.split("+").split(" • ");
+    var mins = parseInt(parts[0]);
+    var inc = parseInt(parts[1]);
+
+
+    return { mins: mins, inc: inc };
+}
+function get_current_time(){
+    var your_time_box=document.getElementsByClassName("time")[1]
+    current_min=parseInt(your_time_box.childNodes[0].data)
+    current_sec=parseInt(your_time_box.childNodes[2].data)
+
+}
