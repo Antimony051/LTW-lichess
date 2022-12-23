@@ -102,16 +102,12 @@ function showForm() {
 setInterval(checkTimer, 500);
 function checkTimer(){
     get_current_time()
-    console.log(current_min,current_sec)
     if ((current_min==user_min) && (current_sec==user_sec)){
         if (!sound_played){
         window.lichess.sound.play('lowTime')
             sound_played=true
     }
     }
- //   time_control=document.getElementsByClassName("setup")[0].childNodes[1].data
- //   extractNumbers(time_control)
-
 }
 function extractNumbers(time_control) {
     var parts = time_control.split("+").split(" • ");
